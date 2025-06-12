@@ -3,25 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Bookshop</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Bookshop</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1>Welcome to the Simple Bookshop</h1>
-    </header>
-    <main>
-        <section id="books">
-            <h2>Available Books</h2>
-            <div id="book-list">
-                <!-- Books will be loaded here by JavaScript -->
-                <p>Loading books...</p>
-            </div>
-        </section>
-    </main>
-    <footer>
-        <p>&copy; 2024 Simple Bookshop</p>
-    </footer>
-    <script src="script.js"></script>
+    <div class="header-status">
+        <span id="user-status">User: Network Error</span>
+        <span id="locale-status">Locale:</span>
+    </div>
+    <div class="container">
+        <h1>Capire Books</h1>
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search...">
+        </div>
+        <table class="books-table">
+            <thead>
+                <tr>
+                    <th>Book</th>
+                    <th>Author</th>
+                    <th>Genre</th>
+                    <th>Rating</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody id="books-table-body">
+                <!-- Book data will be loaded here by JavaScript -->
+            </tbody>
+        </table>
+        <p class="details-message">( click on a row to see details... )</p>
+    </div>
+    <script src="scripts.js"></script>
 </body>
 </html> 
