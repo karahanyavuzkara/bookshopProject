@@ -1,8 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('search-input');
     const booksTableBody = document.getElementById('books-table-body');
+    const cartButton = document.getElementById('cart-button');
+    const cartModal = document.getElementById('cart-modal');
+    const closeButton = document.querySelector('.close-button');
+    const cartItemsBody = document.getElementById('cart-items-body');
+    const cartCount = document.getElementById('cart-count');
+    const cartTotalAmount = document.getElementById('cart-total-amount');
+    const checkoutButton = document.getElementById('checkout-button');
 
     let allBooks = [];
+    let cartItems = [];
 
     const fetchBooks = async () => {
         try {
@@ -54,13 +62,111 @@ document.addEventListener('DOMContentLoaded', () => {
 
     searchInput.addEventListener('input', filterBooks);
 
-    // Optional: Add a click listener for rows to show details (currently just an alert)
+    const fetchCartItems = async () => {
+        try {
+            const response = await fetch('/browse/CartItems');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            cartItems = data.value;
+            updateCartCount();
+            renderCartItems();
+        } catch (error) {
+            console.error('Error fetching cart items:', error);
+        }
+    };
+
+    const updateCartCount = () => {
+        cartCount.textContent = cartItems.length;
+    };
+
+    const renderCartItems = () => {
+        cartItemsBody.innerHTML = '';
+        if (cartItems.length === 0) {
+            cartItemsBody.innerHTML = '<tr><td colspan="3" class="empty-cart">Your cart is empty</td></tr>';
+            cartTotalAmount.textContent = '0.00';
+            checkoutButton.disabled = true;
+            return;
+        }
+
+        let total = 0;
+        cartItems.forEach(item => {
+            const book = allBooks.find(b => b.ID === item.book_ID);
+            if (book) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${book.title}</td>
+                    <td>$${book.price.toFixed(2)}</td>
+                    <td>
+                        <button class="remove-from-cart" data-cart-item-id="${item.ID}">
+                            Remove
+                        </button>
+                    </td>
+                `;
+                cartItemsBody.appendChild(row);
+                total += book.price;
+            }
+        });
+
+        cartTotalAmount.textContent = total.toFixed(2);
+        checkoutButton.disabled = false;
+    };
+
+    const removeFromCart = async (cartItemId) => {
+        try {
+            const response = await fetch(`/browse/CartItems(${cartItemId})`, {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            await fetchCartItems(); // Refresh cart items
+        } catch (error) {
+            console.error('Error removing item from cart:', error);
+            alert('Failed to remove item from cart. Please try again.');
+        }
+    };
+
+    // Cart Modal Event Listeners
+    cartButton.addEventListener('click', () => {
+        cartModal.classList.add('show');
+        fetchCartItems();
+    });
+
+    closeButton.addEventListener('click', () => {
+        cartModal.classList.remove('show');
+    });
+
+    window.addEventListener('click', (event) => {
+        if (event.target === cartModal) {
+            cartModal.classList.remove('show');
+        }
+    });
+
+    cartItemsBody.addEventListener('click', async (event) => {
+        if (event.target.classList.contains('remove-from-cart')) {
+            const cartItemId = event.target.dataset.cartItemId;
+            await removeFromCart(cartItemId);
+        }
+    });
+
+    checkoutButton.addEventListener('click', () => {
+        // TODO: Implement checkout functionality
+        alert('Checkout functionality coming soon!');
+    });
+
+    // Modify the existing add to cart functionality to update the cart count
     booksTableBody.addEventListener('click', async (event) => {
-        const row = event.target.closest('tr');
         if (event.target.classList.contains('add-to-cart-btn')) {
             const bookId = event.target.dataset.bookId;
             const button = event.target;
-            button.disabled = true; // Disable button while request is processing
+            button.disabled = true;
             try {
                 const response = await fetch('/browse/addToCart', {
                     method: 'POST',
@@ -77,15 +183,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     throw new Error(data.error?.message || `HTTP error! status: ${response.status}`);
                 }
                 
+                await fetchCartItems(); // Update cart after adding item
                 alert(data.message || 'Book added to cart successfully!');
             } catch (error) {
                 console.error('Error adding to cart:', error);
                 alert(`Failed to add book to cart: ${error.message}`);
             } finally {
-                button.disabled = false; // Re-enable button after request completes
+                button.disabled = false;
             }
-        } else if (row && row.dataset.bookId) {
-            const bookId = row.dataset.bookId;
+        } else if (event.target.closest('tr') && event.target.closest('tr').dataset.bookId) {
+            const bookId = event.target.closest('tr').dataset.bookId;
             const book = allBooks.find(b => b.ID === bookId);
             if (book) {
                 alert(`Details for Book: ${book.title}\nAuthor: ${book.author}\nGenre: ${book.genre}\nRating: ${book.rating}\nPrice: $${book.price.toFixed(2)}`);
@@ -96,4 +203,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     fetchBooks(); // Initial fetch when the page loads
+    fetchCartItems(); // Initial cart fetch
 }); 

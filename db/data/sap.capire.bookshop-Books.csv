@@ -1,3 +1,6 @@
 ID;title;descr;author_ID;genre_ID;stock;price;currency_code
 1;Clean Code;Guide to writing clean software;1;1;10;39.99;USD
 2;The Pragmatic Programmer;Tips for pragmatic development;2;2;5;29.99;USD
+3;Street Coder;Practical advice for developers;3;1;7;25.00;USD
+4;Meditations;Philosophical reflections;4;3;12;15.50;USD
+5;Think Like Steve Jobs;Innovation and leadership;5;2;8;22.75;USD

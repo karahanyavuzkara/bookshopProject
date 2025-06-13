@@ -6,7 +6,7 @@ service CatalogService @(path:'/browse') {
   } excluding { createdBy, modifiedBy };
 
   @readonly entity Carts as select from my.Carts;
-  @readonly entity CartItems as select from my.CartItems;
+  entity CartItems as projection on my.CartItems;
 
   action submitOrder (book: Books:ID, quantity: Integer);
   action addToCart(bookId: Integer) returns String;
