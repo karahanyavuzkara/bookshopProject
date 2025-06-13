@@ -8,6 +8,7 @@ entity Books : managed {
   author : Association to Authors;
   genre  : Association to Genres;
   stock  : Integer;
+  rating : Decimal(2,1);
   price  : Decimal(9,2);
   currency : Currency;
 }
