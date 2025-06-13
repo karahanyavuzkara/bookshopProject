@@ -24,3 +24,17 @@ entity Genres : sap.common.CodeList {
   parent   : Association to Genres;
   children : Composition of many Genres on children.parent = $self;
 }
+
+entity Carts : managed {
+  key ID     : String(36);
+  items      : Composition of many CartItems on items.cart = $self;
+}
+
+entity CartItems : managed {
+  key ID       : UUID;
+  cart_ID    : String(36);
+  book_ID    : Integer;
+  cart       : Association to Carts on cart.ID = cart_ID;
+  book       : Association to Books on book.ID = book_ID;
+  quantity   : Integer;
+}

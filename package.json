@@ -13,10 +13,11 @@
     "node": ">=20"
   },
   "devDependencies": {
+    "@cap-js/cds-types": "^0.11.0",
     "@cap-js/sqlite": "^2",
-    "@cap-js/cds-types": "^0.11.0"
+    "cross-env": "^7.0.3"
   },
   "scripts": {
-    "start": "cds-serve"
+    "start": "cross-env DEBUG=cds*,sql* cds-serve --port 4004"
   }
 }

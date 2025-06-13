@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${book.genre || ''}</td>
                 <td>${book.rating || ''}</td>
                 <td>${book.price !== undefined ? `$${book.price.toFixed(2)}` : ''}</td>
+                <td><button class="add-to-cart-btn" data-book-id="${book.ID}">Add to Cart</button></td>
             `;
             booksTableBody.appendChild(row);
         });
@@ -54,9 +55,36 @@ document.addEventListener('DOMContentLoaded', () => {
     searchInput.addEventListener('input', filterBooks);
 
     // Optional: Add a click listener for rows to show details (currently just an alert)
-    booksTableBody.addEventListener('click', (event) => {
+    booksTableBody.addEventListener('click', async (event) => {
         const row = event.target.closest('tr');
-        if (row && row.dataset.bookId) {
+        if (event.target.classList.contains('add-to-cart-btn')) {
+            const bookId = event.target.dataset.bookId;
+            const button = event.target;
+            button.disabled = true; // Disable button while request is processing
+            try {
+                const response = await fetch('/browse/addToCart', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ bookId: parseInt(bookId, 10) })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error?.message || `HTTP error! status: ${response.status}`);
+                }
+                
+                alert(data.message || 'Book added to cart successfully!');
+            } catch (error) {
+                console.error('Error adding to cart:', error);
+                alert(`Failed to add book to cart: ${error.message}`);
+            } finally {
+                button.disabled = false; // Re-enable button after request completes
+            }
+        } else if (row && row.dataset.bookId) {
             const bookId = row.dataset.bookId;
             const book = allBooks.find(b => b.ID === bookId);
             if (book) {
