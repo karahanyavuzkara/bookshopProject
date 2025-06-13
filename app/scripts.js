@@ -14,13 +14,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const fetchBooks = async () => {
         try {
-            // Assuming the CAP service exposes books via /browse/Books
+            
             const response = await fetch('/browse/Books');
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
-            allBooks = data.value; // CAP OData services return data in 'value' array
+            allBooks = data.value; 
             renderBooks(allBooks);
         } catch (error) {
             console.error('Error fetching books:', error);
@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            await fetchCartItems(); // Refresh cart items
+            await fetchCartItems(); 
         } catch (error) {
             console.error('Error removing item from cart:', error);
             alert('Failed to remove item from cart. Please try again.');
@@ -157,11 +157,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     checkoutButton.addEventListener('click', () => {
-        // TODO: Implement checkout functionality
+        
         alert('Checkout functionality coming soon!');
     });
 
-    // Modify the existing add to cart functionality to update the cart count
+    
     booksTableBody.addEventListener('click', async (event) => {
         if (event.target.classList.contains('add-to-cart-btn')) {
             const bookId = event.target.dataset.bookId;
@@ -202,6 +202,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    fetchBooks(); // Initial fetch when the page loads
-    fetchCartItems(); // Initial cart fetch
+    fetchBooks(); 
+    fetchCartItems(); 
 }); 

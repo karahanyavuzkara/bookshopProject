@@ -91,7 +91,6 @@ h1 {
     text-align: center;
 }
 
-/* Modal Styles */
 .modal {
     display: none;
     position: fixed;
@@ -171,7 +170,7 @@ h1 {
     background-color: #cc0000;
 }
 
-/* Cart Summary Styles */
+
 .cart-summary {
     display: flex;
     justify-content: space-between;

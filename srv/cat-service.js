@@ -39,7 +39,7 @@ module.exports = cds.service.impl(async function () {
           ID: newCartId
         })
       );
-      // After inserting, re-query to ensure 'cart' has the correct structure and ID
+     
       cart = await tx.run(SELECT.from(Carts).where({ ID: newCartId }));
     }
 
@@ -54,7 +54,7 @@ module.exports = cds.service.impl(async function () {
     );
 
     if (existingItem[0]) {
-      // Update quantity if book is already in cart
+     
       await tx.run(
         UPDATE(CartItems)
           .set({ quantity: { '+=': 1 } })
